@@ -12,6 +12,8 @@ const App = () => {
         data: {},
     };
 
+    console.log('process env', process.env)
+
     const [files, setFiles] = useState([]);
     const [imagesFile, setImagesFile] = useState([]);
     const [detection, setDetection] = useState(initDetection);
@@ -28,7 +30,7 @@ const App = () => {
 
         axios({
             method: 'post',
-            url: 'http://localhost:5000/analyze-images?treshold=' + treshold,
+            url: process.env.REACT_APP_API_URL + '/analyze-images?treshold=' + treshold,
             data: formData,
             headers: { 'Content-Type': 'multipart/form-data' }
         })
