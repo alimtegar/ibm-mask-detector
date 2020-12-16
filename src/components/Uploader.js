@@ -1,29 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useDropzone } from 'react-dropzone';
 
-const thumbsContainer = {
-    display: 'flex',
-    flexDirection: 'row',
-    flexWrap: 'wrap'
-};
-
-const thumb = {
-    display: 'inline-flex',
-    boxSizing: 'border-box'
-};
-
-const thumbInner = {
-    display: 'flex',
-    minWidth: 0,
-    overflow: 'hidden'
-};
-
-const img = {
-    display: 'block',
-};
-
-const Uploader = ({ setImagesFile }) => {
+const Uploader = ({ setImagesFile, detection }) => {
     const [files, setFiles] = useState([]);
+    const canvasRef = useRef();
+
     const { getRootProps, getInputProps } = useDropzone({
         accept: 'image/*',
         onDrop: (acceptedFiles) => {
@@ -36,17 +17,44 @@ const Uploader = ({ setImagesFile }) => {
     });
 
     const thumbs = files.map((file) => (
-        <div style={thumb} key={file.name} className="bg-white w-full">
-            <div style={thumbInner}>
-                <img
-                    className="w-full"
-                    src={file.preview}
-                    style={img}
-                    alt="Preview"
-                />
-            </div>
-        </div>
+        <img
+            key={file.name}
+            src={file.preview}
+            alt={file.name}
+        />
     ));
+
+    const renderDetectionBox = () => {
+        console.log(detection.data);
+
+        const ctx = canvasRef.current.getContext('2d');
+
+        ctx.canvas.width = detection.data.dimensions.width;
+        ctx.canvas.height = detection.data.dimensions.height;
+        
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+        detection.data.objects.collections[0].objects.map((dataItem) => {
+            const label = dataItem.object;
+            const x = dataItem.location.left;
+            const y = dataItem.location.top;
+            const w = dataItem.location.width;
+            const h = dataItem.location.height;
+            let color = 'green';
+
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 3;
+            ctx.strokeRect(x, y, w, h);
+        });
+
+
+
+        // result.data.images.map((image) => {
+
+        // })
+    }
+
+    if (Object.keys(detection.data).length) { renderDetectionBox(); }
 
     useEffect(() => () => {
         // Make sure to revoke the data uris to avoid memory leaks
@@ -56,19 +64,25 @@ const Uploader = ({ setImagesFile }) => {
     return (
         <section className="container bg-white p-4">
             {!files.length ? (
-                <div {...getRootProps({ className: 'dropzone flex flex-col justify-center h-80 text-center text-gray-500 text-sm border-2 border-dashed border-gray-300 hover:border-green-500 rounded-sm outline-none cursor-pointer' })}>
+                <div {...getRootProps({ className: 'dropzone flex flex-col justify-center items-center w-80 h-80 text-center text-gray-500 text-sm border-2 border-dashed border-gray-300 hover:border-green-500 rounded-sm outline-none cursor-pointer' })}>
                     <input {...getInputProps()} />
 
                     <span className="font-bold mb-1">
                         Upload Image
                     </span>
-                    <span className="text-xs">
-                        Drag and drop your image file here.
+                    <span className="w-2/3 text-xs">
+                        Drag and drop or click this area to upload your image file.
                     </span>
-
-                </div>) : (
-                    <aside style={thumbsContainer}>
+                </div>
+            ) : (
+                    <aside className="relative flex justify-center items-center bg-gray-500 w-80 overflow-hidden">
                         {thumbs}
+                        <canvas
+                            ref={canvasRef}
+                            className="absolute"
+                        // width="100%"
+                        // height="100%"
+                        />
                     </aside>
                 )}
         </section>
