@@ -4,17 +4,20 @@ import axios from 'axios';
 import Uploader from './components/Uploader';
 
 const App = () => {
-    const [imagesFile, setImagesFile] = useState([]);
-    const [detection, setDetection] = useState({
+    const treshold = 0.2;
+    const initDetection = {
         isLoading: false,
         data: {},
-    });
-    const treshold = 0.2;
+    };
+
+    const [files, setFiles] = useState([]);
+    const [imagesFile, setImagesFile] = useState([]);
+    const [detection, setDetection] = useState(initDetection);
 
     const analyzeImages = () => {
         setDetection({
-            isLoading: true,
             ...detection,
+            isLoading: true,
         });
 
         let formData = new FormData();
@@ -38,6 +41,12 @@ const App = () => {
             });
     };
 
+    const removeImages = () => { 
+        setFiles([]); 
+        setImagesFile([]);
+        setDetection(initDetection); 
+    };
+
     return (
         <div>
             <div className="flex flex-col justify-center items-center bg-gray-100 p-8 w-screen h-screen">
@@ -49,12 +58,34 @@ const App = () => {
                 </div>
                 <div className="shadow rounded overflow-hidden">
                     <Uploader
+                        setFiles={setFiles}
+                        files={files}
                         setImagesFile={setImagesFile}
                         detection={detection}
                     />
 
-                    <button onClick={() => analyzeImages()} className={`w-full text-white text-sm font-bold px-4 py-3 focus:outline-none ${detection.isLoading && !Object.keys(detection.data).length ? 'bg-gray-400' : 'bg-green-500 hover:bg-green-600'}`}>
-                        {detection.isLoading && !Object.keys(detection.data).length ? 'Loading...' : 'Detect Masks'}
+                    <button
+                        onClick={
+                            detection.isLoading && !Object.keys(detection.data).length
+                                ? () => { }
+                                : Object.keys(detection.data).length
+                                    ? () => removeImages()
+                                    : () => analyzeImages()
+                        }
+                        className={`w-full text-white text-sm font-bold px-4 py-3 focus:outline-none ${detection.isLoading && !Object.keys(detection.data).length
+                            ? 'bg-gray-400'
+                            : Object.keys(detection.data).length
+                                ? 'bg-red-500 hover:bg-red-600'
+                                : 'bg-green-500 hover:bg-green-600'
+                            }`}
+                    >
+                        {
+                            detection.isLoading && !Object.keys(detection.data).length
+                                ? 'Loading...'
+                                : Object.keys(detection.data).length
+                                    ? 'Reset'
+                                    : 'Detect Masks'
+                        }
                     </button>
                 </div>
             </div>

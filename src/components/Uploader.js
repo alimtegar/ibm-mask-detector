@@ -1,8 +1,7 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useDropzone } from 'react-dropzone';
 
-const Uploader = ({ setImagesFile, detection }) => {
-    const [files, setFiles] = useState([]);
+const Uploader = ({ setFiles, files, setImagesFile, detection }) => {
     const canvasRef = useRef();
 
     const { getRootProps, getInputProps } = useDropzone({
@@ -26,7 +25,6 @@ const Uploader = ({ setImagesFile, detection }) => {
 
     const renderDetectionBox = () => {
         console.log(detection.data);
-
         const ctx = canvasRef.current.getContext('2d');
 
         ctx.canvas.width = detection.data.dimensions.width;
@@ -34,24 +32,24 @@ const Uploader = ({ setImagesFile, detection }) => {
         
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-        detection.data.objects.collections[0].objects.map((dataItem) => {
+        Object.keys(detection.data.objects).length && detection.data.objects.collections[0].objects.map((dataItem) => {
             const label = dataItem.object;
             const x = dataItem.location.left;
             const y = dataItem.location.top;
             const w = dataItem.location.width;
             const h = dataItem.location.height;
-            let color = 'green';
+            let color;
+
+            switch(label) {
+                case 'with_mask': color = 'green'; break;
+                case 'without_mask': color = 'red'; break;
+                default: color = 'yellow'; break;
+            }
 
             ctx.strokeStyle = color;
             ctx.lineWidth = 3;
             ctx.strokeRect(x, y, w, h);
         });
-
-
-
-        // result.data.images.map((image) => {
-
-        // })
     }
 
     if (Object.keys(detection.data).length) { renderDetectionBox(); }
@@ -75,16 +73,16 @@ const Uploader = ({ setImagesFile, detection }) => {
                     </span>
                 </div>
             ) : (
-                    <aside className="relative flex justify-center items-center bg-gray-500 w-80 overflow-hidden">
-                        {thumbs}
-                        <canvas
-                            ref={canvasRef}
-                            className="absolute"
-                        // width="100%"
-                        // height="100%"
-                        />
-                    </aside>
-                )}
+                <aside className="relative flex justify-center items-center bg-gray-300 w-80 rounded-sm overflow-hidden">
+                    {thumbs}
+                    <canvas
+                        ref={canvasRef}
+                        className="absolute"
+                    // width="100%"
+                    // height="100%"
+                    />
+                </aside>
+            )}
         </section>
     );
 }
