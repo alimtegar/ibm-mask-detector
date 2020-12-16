@@ -4,19 +4,11 @@ import { useDropzone } from 'react-dropzone';
 const thumbsContainer = {
     display: 'flex',
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginTop: 16
+    flexWrap: 'wrap'
 };
 
 const thumb = {
     display: 'inline-flex',
-    borderRadius: 2,
-    border: '1px solid #eaeaea',
-    marginBottom: 8,
-    marginRight: 8,
-    width: 100,
-    height: 100,
-    padding: 4,
     boxSizing: 'border-box'
 };
 
@@ -28,8 +20,6 @@ const thumbInner = {
 
 const img = {
     display: 'block',
-    width: 'auto',
-    height: '100%'
 };
 
 const Uploader = ({ setImagesFile }) => {
@@ -46,9 +36,10 @@ const Uploader = ({ setImagesFile }) => {
     });
 
     const thumbs = files.map((file) => (
-        <div style={thumb} key={file.name}>
+        <div style={thumb} key={file.name} className="bg-white w-full">
             <div style={thumbInner}>
                 <img
+                    className="w-full"
                     src={file.preview}
                     style={img}
                     alt="Preview"
@@ -63,14 +54,23 @@ const Uploader = ({ setImagesFile }) => {
     }, [files]);
 
     return (
-        <section className="container">
-            <div {...getRootProps({ className: 'dropzone' })}>
-                <input {...getInputProps()} />
-                <p>Drag 'n' drop some files here, or click to select files</p>
-            </div>
-            <aside style={thumbsContainer}>
-                {thumbs}
-            </aside>
+        <section className="container bg-white p-4">
+            {!files.length ? (
+                <div {...getRootProps({ className: 'dropzone flex flex-col justify-center h-80 text-center text-gray-500 text-sm border-2 border-dashed border-gray-300 hover:border-green-500 rounded-sm outline-none cursor-pointer' })}>
+                    <input {...getInputProps()} />
+
+                    <span className="font-bold mb-1">
+                        Upload Image
+                    </span>
+                    <span className="text-xs">
+                        Drag and drop your image file here.
+                    </span>
+
+                </div>) : (
+                    <aside style={thumbsContainer}>
+                        {thumbs}
+                    </aside>
+                )}
         </section>
     );
 }

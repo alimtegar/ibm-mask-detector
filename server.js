@@ -30,7 +30,7 @@ app.post('/analyze-images', function (req, res) {
         files['images_file'].map((file) => {
             imagesFile.push({
                 data: fs.createReadStream(file.path),
-                contentType: 'image/jpeg',
+                contentType: file.headers['content-type'],
             });
 
             return false;
@@ -40,19 +40,15 @@ app.post('/analyze-images', function (req, res) {
             imagesFile: imagesFile,
             collectionIds: [process.env.IBM_COLLECTION_ID],
             features: ['objects'],
-            threshold: 0.2,
+            threshold: req.query.treshold,
         };
 
         visualRecognition.analyze(params)
             .then(response => {
-                console.log(JSON.stringify(response.result, null, 2));
-
                 res.json(response.result);
             })
-            .catch(err => {
-                console.log('error: ', err);
-
-                res.json(err);
+            .catch(error => {
+                res.json(error);
             });
     });
 
