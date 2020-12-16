@@ -3,3 +3,6 @@
 html {
     font-family: 'Mulish', sans-serif;
 }
+
+.min-w-80 { min-width: 20rem; }
+.min-h-80 { min-height: 20rem; }

@@ -30,6 +30,7 @@ const Uploader = ({ setFiles, files, setImagesFile, detection }) => {
         ctx.canvas.width = detection.data.dimensions.width;
         ctx.canvas.height = detection.data.dimensions.height;
         
+        // Clear detection box in canvas
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
         // Font options
@@ -60,10 +61,10 @@ const Uploader = ({ setFiles, files, setImagesFile, detection }) => {
             const textWidth = ctx.measureText(label).width;
             const textHeight = parseInt(font, 10);
 
-            ctx.fillRect(x - 1, y - (textHeight + 3), textWidth + 5, textHeight + 5);
+            ctx.fillRect(x - 1, y - (textHeight + 3) - 1, textWidth + 5, textHeight + 5);
 
             ctx.fillStyle = "#ffffff";
-            ctx.fillText(label.replace('_', ' '), x + 3, y - textHeight);
+            ctx.fillText(label.replace('_', ' '), x + 3, y - textHeight - 1);
 
             return false;
         });
@@ -90,11 +91,11 @@ const Uploader = ({ setFiles, files, setImagesFile, detection }) => {
                     </span>
                 </div>
             ) : (
-                <aside className="relative flex justify-center items-center bg-gray-300 w-80 rounded-sm overflow-hidden">
+                <aside className="relative flex justify-center items-center bg-gray-300 min-w-80 min-h-80 rounded-sm overflow-hidden">
                     {thumbs}
                     <canvas
                         ref={canvasRef}
-                        className="absolute"
+                        className="absolute w-full md:w-auto"
                     // width="100%"
                     // height="100%"
                     />

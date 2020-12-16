@@ -49,7 +49,7 @@ const App = () => {
 
     return (
         <div>
-            <div className="flex flex-col justify-center items-center bg-gray-100 p-8 w-screen h-screen">
+            <div className="flex flex-col justify-center items-center bg-gray-100 p-8 w-screen min-h-screen">
                 <div className="text-center mb-8">
                     <h1 className="font-bold text-lg leading-none">
                         IBM Mask Detector
