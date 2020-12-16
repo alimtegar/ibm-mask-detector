@@ -62,5 +62,5 @@ app.get('/', function (_, res) {
 });
 
 app.listen(PORT, function () {
-    console.log(`Server istening on port ${PORT} at ${new Date()}`)
+    console.log(`Server listening on port ${PORT} at ${new Date()}`)
 });

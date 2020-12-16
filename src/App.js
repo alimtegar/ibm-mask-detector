@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import axios from 'axios';
 
+import {version} from '../package.json';
+
 import Uploader from './components/Uploader';
 
 const App = () => {
@@ -54,7 +56,7 @@ const App = () => {
                     <h1 className="font-bold text-lg leading-none">
                         IBM Mask Detector
                     </h1>
-                    <span className="font-bold text-xs text-gray-700">v1.0</span>
+                    <span className="font-bold text-xs text-gray-700">v{version}</span>
                 </div>
                 <div className="shadow rounded overflow-hidden">
                     <Uploader
