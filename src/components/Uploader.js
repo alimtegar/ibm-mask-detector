@@ -32,6 +32,11 @@ const Uploader = ({ setFiles, files, setImagesFile, detection }) => {
         
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
+        // Font options
+        const font = "14px sans-serif";
+        ctx.font = font;
+        ctx.textBaseline = "top";
+
         Object.keys(detection.data.objects).length && detection.data.objects.collections[0].objects.map((dataItem) => {
             const label = dataItem.object;
             const x = dataItem.location.left;
@@ -49,6 +54,18 @@ const Uploader = ({ setFiles, files, setImagesFile, detection }) => {
             ctx.strokeStyle = color;
             ctx.lineWidth = 3;
             ctx.strokeRect(x, y, w, h);
+
+            ctx.fillStyle = color;
+
+            const textWidth = ctx.measureText(label).width;
+            const textHeight = parseInt(font, 10);
+
+            ctx.fillRect(x - 1, y - (textHeight + 3), textWidth + 5, textHeight + 5);
+
+            ctx.fillStyle = "#ffffff";
+            ctx.fillText(label.replace('_', ' '), x + 3, y - textHeight);
+
+            return false;
         });
     }
 
